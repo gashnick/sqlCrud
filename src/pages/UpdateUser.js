@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   ScrollView,
@@ -6,20 +6,20 @@ import {
   Alert,
   SafeAreaView,
   Text,
-} from 'react-native';
+} from "react-native";
 
-import Mytext from './components/Mytext';
-import Mytextinput from './components/Mytextinput';
-import Mybutton from './components/Mybutton';
-import { DatabaseConnection } from '../database/database-connection';
+import Mytext from "./components/Mytext";
+import Mytextinput from "./components/Mytextinput";
+import Mybutton from "./components/Mybutton";
+import { DatabaseConnection } from "../database/database-connection";
 
 const db = DatabaseConnection.getConnection();
 
 const UpdateUser = ({ navigation }) => {
-  let [inputUserId, setInputUserId] = useState('');
-  let [userName, setUserName] = useState('');
-  let [userContact, setUserContact] = useState('');
-  let [userAddress, setUserAddress] = useState('');
+  let [inputUserId, setInputUserId] = useState("");
+  let [userName, setUserName] = useState("");
+  let [userContact, setUserContact] = useState("");
+  let [userAddress, setUserAddress] = useState("");
 
   let updateAllStates = (name, contact, address) => {
     setUserName(name);
@@ -31,20 +31,16 @@ const UpdateUser = ({ navigation }) => {
     console.log(inputUserId);
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM table_user where user_id = ?',
+        "SELECT * FROM table_user where user_id = ?",
         [inputUserId],
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
             let res = results.rows.item(0);
-            updateAllStates(
-              res.user_name,
-              res.user_contact,
-              res.user_address
-            );
+            updateAllStates(res.user_name, res.user_contact, res.user_address);
           } else {
-            alert('User not found!');
-            updateAllStates('', '', '');
+            alert("User not found!");
+            updateAllStates("", "", "");
           }
         }
       );
@@ -54,41 +50,41 @@ const UpdateUser = ({ navigation }) => {
     console.log(inputUserId, userName, userContact, userAddress);
 
     if (!inputUserId) {
-      alert('Please provide the Code!');
+      alert("Please provide the Code!");
       return;
     }
     if (!userName) {
-      alert('Please provide the name!');
+      alert("Please provide the name!");
       return;
     }
     if (!userContact) {
-      alert('Please provide your telephone number!');
+      alert("Please provide your telephone number!");
       return;
     }
     if (!userAddress) {
-      alert('Please provide the address!');
+      alert("Please provide the address!");
       return;
     }
 
     db.transaction((tx) => {
       tx.executeSql(
-        'UPDATE table_user set user_name=?, user_contact=? , user_address=? where user_id=?',
+        "UPDATE table_user set user_name=?, user_contact=? , user_address=? where user_id=?",
         [userName, userContact, userAddress, inputUserId],
         (tx, results) => {
-          console.log('Results', results.rowsAffected);
+          console.log("Results", results.rowsAffected);
           if (results.rowsAffected > 0) {
             Alert.alert(
-              'Success',
-              'User updated successfully!!',
+              "Success",
+              "User updated successfully!!",
               [
                 {
-                  text: 'Ok',
-                  onPress: () => navigation.navigate('HomeScreen'),
+                  text: "Ok",
+                  onPress: () => navigation.navigate("HomeScreen"),
                 },
               ],
               { cancelable: false }
             );
-          } else alert('Error updating user');
+          } else alert("Error updating user");
         }
       );
     });
@@ -96,38 +92,30 @@ const UpdateUser = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <View style={{ flex: 1 }}>
           <ScrollView keyboardShouldPersistTaps="handled">
             <KeyboardAvoidingView
               behavior="padding"
-              style={{ flex: 1, justifyContent: 'space-between' }}>
-              <Mytext text="Filtro de Usuário" />
+              style={{ flex: 1, justifyContent: "space-between" }}
+            >
+              <Mytext text="Fill the user details" />
               <Mytextinput
-                placeholder="Entre com o Código do Usuário"
+                placeholder="Enter user id"
                 style={{ padding: 10 }}
-                onChangeText={
-                  (inputUserId) => setInputUserId(inputUserId)
-                }
+                onChangeText={(inputUserId) => setInputUserId(inputUserId)}
               />
-              <Mybutton
-                title="Search User"
-                customClick={searchUser}
-              />
+              <Mybutton title="Search User" customClick={searchUser} />
               <Mytextinput
                 placeholder="Enter Name"
                 value={userName}
                 style={{ padding: 10 }}
-                onChangeText={
-                  (userName) => setUserName(userName)
-                }
+                onChangeText={(userName) => setUserName(userName)}
               />
               <Mytextinput
-                placeholder="Enter with Phone"
-                value={'' + userContact}
-                onChangeText={
-                  (userContact) => setUserContact(userContact)
-                }
+                placeholder="Enter Phone number"
+                value={"" + userContact}
+                onChangeText={(userContact) => setUserContact(userContact)}
                 maxLength={10}
                 style={{ padding: 10 }}
                 keyboardType="numeric"
@@ -135,18 +123,13 @@ const UpdateUser = ({ navigation }) => {
               <Mytextinput
                 value={userAddress}
                 placeholder="Enter the Address"
-                onChangeText={
-                  (userAddress) => setUserAddress(userAddress)
-                }
+                onChangeText={(userAddress) => setUserAddress(userAddress)}
                 maxLength={225}
                 numberOfLines={5}
                 multiline={true}
-                style={{ textAlignVertical: 'top', padding: 10 }}
+                style={{ textAlignVertical: "top", padding: 10 }}
               />
-              <Mybutton
-                title="Update User"
-                customClick={updateUser}
-              />
+              <Mybutton title="Update User" customClick={updateUser} />
             </KeyboardAvoidingView>
           </ScrollView>
         </View>
